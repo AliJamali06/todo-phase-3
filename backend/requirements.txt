@@ -1,0 +1,29 @@
+# FastAPI and Dependencies
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+
+# SQLModel for Database
+sqlmodel>=0.0.22
+
+# Database
+psycopg2-binary>=2.9.10
+alembic>=1.14.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.25.0
+httpx>=0.28.0
+
+# Environment Configuration
+python-dotenv>=1.0.1
+
+# Authentication
+bcrypt>=4.2.0
+pyjwt>=2.10.0
+python-jose>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# Utilities
+python-multipart>=0.0.20
