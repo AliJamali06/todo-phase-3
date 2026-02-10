@@ -1,6 +1,6 @@
 import { ApiResponse, Task } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://dostali-todo-phase-2.hf.space/";
 
 async function apiFetch<T>(
   path: string,
