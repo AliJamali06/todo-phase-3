@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth";
+import { signup } from "@/lib/auth";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -19,14 +19,9 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      const result = await signUp(email, password, name || undefined);
+      const result = await signup({ email, password, name: name || undefined });
       if (result.success) {
-        const user = (result.data as { user: { id: string } })?.user;
-        if (user) {
-          localStorage.setItem("user_id", user.id);
-          localStorage.setItem("user_email", email);
-          localStorage.setItem("user_name", name);
-        }
+        // Cookie is set automatically - redirect to dashboard
         router.push("/dashboard");
       } else {
         setError(result.error?.message || "Signup failed");

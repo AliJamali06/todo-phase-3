@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
-import { signOut } from "@/lib/auth";
+import { logout } from "@/lib/auth";
 
 interface HeaderProps {
   userName: string | null;
@@ -15,10 +15,7 @@ export default function Header({ userName }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   async function handleLogout() {
-    await signOut();
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_email");
-    localStorage.removeItem("user_name");
+    await logout();
     router.push("/");
   }
 
@@ -89,7 +86,7 @@ export default function Header({ userName }: HeaderProps) {
                 {userName.charAt(0).toUpperCase()}
               </div>
               <span className="text-sm font-semibold text-gray-800">
-                Ali Jamali
+                {userName}
               </span>
             </div>
           )}
@@ -159,7 +156,7 @@ export default function Header({ userName }: HeaderProps) {
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white">
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-semibold text-gray-800">Ali Jamali</span>
+                <span className="text-sm font-semibold text-gray-800">{userName}</span>
               </div>
             )}
           </nav>

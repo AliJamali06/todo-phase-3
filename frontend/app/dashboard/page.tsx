@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Task } from "@/lib/types";
 import { getTasks } from "@/lib/api";
+import { getCurrentUser } from "@/lib/auth";
 import Header from "@/components/Header";
 import AddTaskForm from "@/components/AddTaskForm";
 import TaskList from "@/components/TaskList";
@@ -30,24 +31,24 @@ export default function DashboardPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem("user_id");
-    const storedName = localStorage.getItem("user_name");
-
-    if (!storedUserId) {
-      router.push("/signin");
-      return;
-    }
-
-    setUserId(storedUserId);
-    setUserName(storedName);
-
-    async function loadTasks() {
+    async function loadUserData() {
       try {
-        const result = await getTasks(storedUserId!);
+        const result = await getCurrentUser();
         if (result.success && result.data) {
-          setTasks((result.data as { tasks: Task[] }).tasks);
+          const user = (result.data as { user: { id: string; name?: string } }).user;
+          setUserId(user.id);
+          setUserName(user.name || null);
+          
+          // Load tasks after getting user
+          const tasksResult = await getTasks(user.id);
+          if (tasksResult.success && tasksResult.data) {
+            setTasks((tasksResult.data as { tasks: Task[] }).tasks);
+          } else {
+            setError(tasksResult.error?.message || "Failed to load tasks");
+          }
         } else {
-          setError(result.error?.message || "Failed to load tasks");
+          // Not authenticated - redirect to signin
+          router.push("/signin");
         }
       } catch {
         setError("Failed to connect to the server");
@@ -56,7 +57,7 @@ export default function DashboardPage() {
       }
     }
 
-    loadTasks();
+    loadUserData();
   }, [router]);
 
   // Filtered & sorted tasks

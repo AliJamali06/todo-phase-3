@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "@/lib/auth";
+import { login } from "@/lib/auth";
 
 function SigninForm() {
   const router = useRouter();
@@ -21,14 +21,9 @@ function SigninForm() {
     setLoading(true);
 
     try {
-      const result = await signIn(email, password);
+      const result = await login({ email, password });
       if (result.success) {
-        const user = (result.data as { user: { id: string; name?: string } })?.user;
-        if (user) {
-          localStorage.setItem("user_id", user.id);
-          localStorage.setItem("user_email", email);
-          if (user.name) localStorage.setItem("user_name", user.name);
-        }
+        // Cookie is set automatically - redirect to dashboard
         router.push("/dashboard");
       } else {
         setError(result.error?.message || "Sign in failed");
