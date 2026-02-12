@@ -41,8 +41,8 @@ def _set_auth_cookie(response: Response, token: str):
         key="auth_token",
         value=token,
         httponly=True,
-        secure=False,  # Set True in production with HTTPS
-        samesite="lax",
+        secure=True,  # Required for SameSite=None
+        samesite="none",  # Allow cross-origin cookies
         max_age=TOKEN_EXPIRY_DAYS * 24 * 60 * 60,
         path="/",
     )
@@ -131,3 +131,18 @@ def signin(data: SigninRequest, response: Response, session: Session = Depends(g
 def signout(response: Response, user_id: str = Depends(get_current_user)):
     response.delete_cookie(key="auth_token", path="/")
     return EnvelopeResponse(success=True, data=None)
+
+
+@router.get("/me")
+def get_me(user_id: str = Depends(get_current_user), session: Session = Depends(get_session)):
+    """Get current authenticated user"""
+    user = session.exec(select(User).where(User.id == user_id)).first()
+    if not user:
+        return EnvelopeResponse(
+            success=False,
+            error=ErrorDetail(code="USER_NOT_FOUND", message="User not found"),
+        )
+    return EnvelopeResponse(
+        success=True,
+        data={"user": UserResponse(id=user.id, email=user.email, name=user.name).model_dump()},
+    )
