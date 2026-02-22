@@ -26,7 +26,12 @@ app = FastAPI(title="Todo Evolution API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", FRONTEND_URL],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        FRONTEND_URL,
+        "https://todo-phase-3-eight.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
